@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 require('dotenv').config()
 
-console.log(process.env.CONNECTIONSTRING)
+// console.log(process.env.CONNECTIONSTRING)
 mongoose.connect(process.env.CONNECTIONSTRING,{ useNewUrlParser: true }).then(()=>{
     console.log('Conectei a base de dados')
 })
