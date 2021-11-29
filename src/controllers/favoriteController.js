@@ -5,6 +5,22 @@ const Sentence = require('../models/sentence')
 
 const router = express.Router()
 
+
+router.post('/', async (req, res) => {
+    try{
+        const { userId } = req.body
+        const ObjectId = require('mongoose').Types.ObjectId; 
+        const query = { favoriteUserId: new ObjectId(userId) };
+        const favoritesByUser = await Sentence.find(query)
+        res.send(favoritesByUser)
+
+    }catch(err){
+        console.log(err)
+        return res.status(400).send({ error: 'favorite sentence failed' })
+    }
+
+})
+
 router.post('/:sentenceId', async (req, res) => {
     try{
             const sentence = await Sentence.findById(req.params.sentenceId)
@@ -17,6 +33,11 @@ router.post('/:sentenceId', async (req, res) => {
             if(!favoriteUsersList.includes(favoriteUserId)){
                 favoriteUsersList = [...favoriteUsersList, favoriteUserId]
                 favoriteCount = favoriteCount + 1
+            }else{
+                const pos = favoriteUsersList.indexOf(favoriteUserId)
+                favoriteUsersList.splice(pos, 1)
+                favoriteCount = favoriteCount - 1
+
             }
         
             const sentenceUpdate = await Sentence.findByIdAndUpdate(req.params.sentenceId, {
