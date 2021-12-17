@@ -38,12 +38,12 @@ router.get('/tags', async (req, res)=>{
 })
 
 router.post('/', async (req,res)=>{
-    const { sentences, tag } = req.body 
+    const { sentences, tag, information } = req.body 
 
     const sentencesList = sentences.split('-')
 
     sentencesList.map(async (sentence) => {
-        await Sentence.create({text: sentence, tag})
+        await Sentence.create({text: sentence, tag, information})
     })
 
     res.send(sentencesList)

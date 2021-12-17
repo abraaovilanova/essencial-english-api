@@ -17,7 +17,11 @@ const SentenceSchema = mongoose.Schema({
     favoriteUserId:[{
         type: mongoose.Schema.Types.ObjectId,
         require: false,
-    }]
+    }],
+    information:{
+        type: String,
+        require: false,
+    }
 })
 
 const Sentence = mongoose.model('Sentence', SentenceSchema)
