@@ -21,6 +21,7 @@ const SentenceSchema = mongoose.Schema({
     information:{
         type: String,
         require: false,
+        default: ''
     }
 })
 
