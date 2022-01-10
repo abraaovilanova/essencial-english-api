@@ -18,6 +18,10 @@ const SentenceSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         require: false,
     }],
+    userViewList:[{
+        type: mongoose.Schema.Types.ObjectId,
+        require: false,
+    }],
     information:{
         type: String,
         require: false,

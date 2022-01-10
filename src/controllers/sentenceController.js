@@ -24,6 +24,14 @@ router.get('/sentences/:tagId', async (req, res)=>{
 router.get('/tags', async (req, res)=>{
     try{
         const tags = await Sentence.find().distinct('tag')
+        let totalTagCount = {}
+
+        await Promise.all(
+            tags.map(async (tag) => {
+                const tagCount = await Sentence.find({tag: tag})
+                totalTagCount[tag] =  tagCount.length
+            })
+        )
 
         res.setHeader("Access-Control-Allow-Origin", "*")
         res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -31,8 +39,41 @@ router.get('/tags', async (req, res)=>{
         res.setHeader("Access-Control-Allow-Headers", "content-type");
         res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
         
-        return res.send({ tags })
+        return res.send({ tags, totalTagCount})
     }catch (err){
+        console.log(err)
+        return res.status(400).send({ error: 'Error loading sentences'})
+    }
+})
+router.post('/tags', async (req, res)=>{
+    try{
+        const { userId }  = req.body
+        const tags = await Sentence.find().distinct('tag')
+        let totalTagCount = {}
+        let userTotalTagCount = {}
+        let userTagPercent = {}
+
+        await Promise.all(
+            tags.map(async (tag) => {
+                const tagCount = await Sentence.find({tag: tag})
+                const userTagCount = await Sentence.find({tag: tag, userViewList: [userId]})
+                totalTagCount[tag] =  tagCount.length
+                userTotalTagCount[tag] = userTagCount.length
+                userTagPercent[tag] = userTotalTagCount[tag]/totalTagCount[tag]
+            })
+
+
+        )
+
+        res.setHeader("Access-Control-Allow-Origin", "*")
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+        res.setHeader("Access-Control-Max-Age", "1800");
+        res.setHeader("Access-Control-Allow-Headers", "content-type");
+        res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
+        
+        return res.send({ tags, totalTagCount, userTotalTagCount, userTagPercent})
+    }catch (err){
+        console.log(err)
         return res.status(400).send({ error: 'Error loading sentences'})
     }
 })
